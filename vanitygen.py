@@ -26,24 +26,25 @@ import random
 import multiprocessing
 
 
-def address_search(pipeout, search_for='12o'):
-    privkey = random.randrange(2**256)
+def address_search(pipeout, search_for='12XqeqZRVkBDgmPLVY4ZC6Y4ruUUEug8Fx'):
+    privkey = random.randrange(2 ** 256)
     address = ''
     count = 0
     start = timeit.default_timer()
 
-    os.write(pipeout, "Searching for %s (pid %s)" % (search_for, os.getpid()))
+    # os.write(pipeout, "Searching for %s (pid %s)" % (search_for, os.getpid()))
 
-    while not search_for in address:
+    while search_for not in address:
         privkey += 1
         pubkey_point = fast_multiply(G, privkey)
         address = pubkey_to_address(pubkey_point)
         count += 1
         if not count % 1000:
-            os.write(pipeout, "Searched %d in %d seconds (pid %d)" % (count, timeit.default_timer()-start, os.getpid()))
+            print("Searched {} in {} seconds ".format(count, timeit.default_timer() - start))
 
-    os.write(pipeout, "Found address %s" % address)
-    os.write(pipeout, "Private key HEX %s" % encode_privkey(privkey,'hex'))
+    print("Found address {} in {} seconds ".format(address, timeit.default_timer() - start))
+    print("Private key HEX {}".format(encode_privkey(privkey, 'hex')))
+
 
 def main():
     # processors = multiprocessing.cpu_count()
@@ -52,15 +53,7 @@ def main():
     # for i in range(processors):
 
     pipein, pipeout = os.pipe()
-    pid = os.fork()
-    if pid == 0:
-        os.close(pipein)
-        address_search(pipeout)
-    else:
-        # pipein = os.fdopen(pipein)
-        while True:
-            line = os.read(pipein, 32)
-            print(line)
+    address_search(pipeout)
 
     print('Main process exiting')
 
