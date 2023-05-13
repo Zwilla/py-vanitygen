@@ -25,6 +25,10 @@ import timeit
 import random
 import multiprocessing
 
+from cryptos import fast_multiply, pubkey_to_address, encode_privkey
+
+from lib.pybitcointools.cryptos import G
+
 
 def address_search(pipeout, search_for='12XqeqZRVkBDgmPLVY4ZC6Y4ruUUEug8Fx'):
     privkey = random.randrange(2 ** 256)
