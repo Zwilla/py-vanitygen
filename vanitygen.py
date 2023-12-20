@@ -29,8 +29,19 @@ from cryptos import fast_multiply, pubkey_to_address, encode_privkey
 
 from lib.pybitcointools.cryptos import G
 
+bitcoinAddress = '12XqeqZRVkBDgmPLVY4ZC6Y4ruUUEug8Fx'
+filenameFound = bitcoinAddress + ".txt"
 
-def address_search(pipeout, search_for='12XqeqZRVkBDgmPLVY4ZC6Y4ruUUEug8Fx'):
+
+def writeFoundDatas(filename, address, pk):
+    with open(filename, 'a') as result:
+        resultToWrite = "Address: {}  PK: {}\n".format(address, pk)
+        result.write(resultToWrite)
+
+
+def address_search(pipeout, search_for=bitcoinAddress):
+    global filenameFound
+    global bitcoinAddress
     privkey = random.randrange(2 ** 256)
     address = ''
     count = 0
@@ -46,8 +57,10 @@ def address_search(pipeout, search_for='12XqeqZRVkBDgmPLVY4ZC6Y4ruUUEug8Fx'):
         if not count % 1000:
             print("Searched {} in {} seconds ".format(count, timeit.default_timer() - start))
 
+    HexPrivKey = encode_privkey(privkey, 'hex')
     print("Found address {} in {} seconds ".format(address, timeit.default_timer() - start))
-    print("Private key HEX {}".format(encode_privkey(privkey, 'hex')))
+    print("Private key HEX {}".format(HexPrivKey))
+    writeFoundDatas(filenameFound, bitcoinAddress, HexPrivKey)
 
 
 def main():
